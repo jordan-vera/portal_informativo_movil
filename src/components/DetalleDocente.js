@@ -4,6 +4,7 @@ import { Image, Button } from 'react-native-elements';
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
 import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import UrlGlobal from '../providers/Global';
 const bootstrapStyleSheet = new BootstrapStyleSheet();
 const { s, c } = bootstrapStyleSheet;
 
@@ -18,7 +19,7 @@ class DetalleDocente extends React.Component {
         return (
             <ScrollView>
                 <View style={styles.container}>
-                <Image source={{ uri: params.foto }} style={styles.imageDocente} PlaceholderContent={<ActivityIndicator />} />
+                <Image source={{ uri: UrlGlobal.urlArchivos+params.foto }} style={styles.imageDocente} PlaceholderContent={<ActivityIndicator />} />
                 <View style={styles.containerBody}>
                     <Button
                         title=" Escuchar"

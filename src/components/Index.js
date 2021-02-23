@@ -1,11 +1,17 @@
-import React, { useCallback } from "react";
-import { View, Text, StyleSheet, Image, Alert, SafeAreaView, ScrollView } from 'react-native';
+import React, { useCallback, useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, Alert, ScrollView } from 'react-native';
 import YoutubePlayer from "react-native-youtube-iframe";
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
+import ApiHttp from '../providers/ApiHttp';
+import logoUtc from '../assets/logoutc.png';
+import Logo from '../assets/logo.png';
+import Tecnologia from '../assets/tecnologia.png';
 const bootstrapStyleSheet = new BootstrapStyleSheet();
 const { s, c } = bootstrapStyleSheet;
 
-export default function Index() {
+function Index() {
+
+    const [videos, setVideos] = useState([]);
 
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
@@ -14,18 +20,10 @@ export default function Index() {
         }
     }, []);
 
-    const videos = [
-        {
-            titulo: "video 1",
-            descripcion: "descripcion del viedo",
-            video_url: "https://www.youtube.com/watch?v=n11rMk2twJ0"
-        },
-        {
-            titulo: "titulo 2",
-            descripcion: "descripcion del viedo 2",
-            video_url: "https://www.youtube.com/watch?v=VFadvkBuwRY"
-        },
-    ];
+    const getAllVideos = async () => {
+        const data = await ApiHttp.video.allshow();
+        setVideos(data);
+    }
 
     const transformarUrl = (url) => {
         let urlPartes = url.split("=");
@@ -34,27 +32,39 @@ export default function Index() {
         if (partesIncluidas.length > 0) {
             idVideo = partesIncluidas[0];
         }
-        return idVideo + "";
+        return idVideo;
     }
 
+    useEffect(() => {
+        getAllVideos()
+    }, []);
+
     return (
-        <ScrollView>
+        <ScrollView style={styles.cuerpo}>
             <View style={styles.container}>
-                <View style={[s.container]}>
+                <View style={[s.container, styles.cuerpo]}>
                     <View style={[s.row]}>
                         <View style={[s.col5]}>
                             <View style={styles.containerImage}>
-                                <Image source={require('../assets/logoutc.png')} style={styles.logoUtc}></Image>
+                                <Image source={logoUtc} style={styles.logoUtc}></Image>
                             </View>
                         </View>
                         <View style={[s.col7]}>
-                            <Image source={require('../assets/logo.png')} style={styles.logoSistema}></Image>
+                            <Image source={Logo} style={styles.logoSistema}></Image>
                         </View>
                     </View>
                 </View>
                 <Text style={styles.titulo}>
                     Portal infomativo de la carrera de Sistemas de información - UTC extensión La Maná
-                    </Text>
+                 </Text>
+
+                <Image source={Tecnologia} style={styles.imagen}></Image>
+
+
+                <Text style={styles.actividades}>
+                    Actividades
+                </Text>
+
                 {
                     videos.map((video, idx) => {
                         return (
@@ -74,16 +84,23 @@ export default function Index() {
                 }
             </View>
         </ScrollView>
-
     );
 }
 
+export default Index;
+
 const styles = StyleSheet.create({
+
+    cuerpo: {
+        marginBottom: 0,
+        paddingBottom: 0
+    },
     container: {
         paddingTop: 0,
         paddingLeft: 20,
         paddingRight: 20,
-        paddingBottom: 30
+        paddingBottom: 0,
+        marginBottom: 0
     },
     titulo: {
         color: "#1E4EAE",
@@ -111,10 +128,19 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         paddingBottom: 20,
         marginTop: 5,
-        
     },
     textoVideo: {
         fontSize: 16
+    },
+    imagen: {
+        width: 'auto',
+        height: 110,
+        marginBottom: 20
+    },
+    actividades: {
+        color: "#1E4EAE",
+        fontSize: 15,
+        fontWeight: 'bold',
     }
 });
 

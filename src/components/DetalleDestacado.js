@@ -4,6 +4,7 @@ import { Image, Button } from 'react-native-elements';
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
 import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import UrlGlobal from '../providers/Global';
 const bootstrapStyleSheet = new BootstrapStyleSheet();
 const { s, c } = bootstrapStyleSheet;
 
@@ -18,7 +19,7 @@ class DetalleDestacado extends React.Component {
         return (
             <ScrollView>
                 <View style={styles.container}>
-                    <Image source={{ uri: params.portada_url }} style={styles.imageNoticia} PlaceholderContent={<ActivityIndicator />} />
+                    <Image source={{ uri: UrlGlobal.urlArchivos+params.portada_url }} style={styles.imageNoticia} PlaceholderContent={<ActivityIndicator />} />
                     <View style={styles.containerBody}>
 
                         <Button
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         marginBottom: 10,
         color: "#313136",
-        marginTop: 5
+        marginTop: 15
     },
     textDescripcion: {
         fontSize: 15,

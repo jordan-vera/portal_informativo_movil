@@ -1,34 +1,59 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
+import ApiHttp from '../providers/ApiHttp';
+import UrlGlobal from '../providers/Global';
 const bootstrapStyleSheet = new BootstrapStyleSheet();
 const { s, c } = bootstrapStyleSheet;
 
 class ListaDocentes extends React.Component {
 
     state = {
-        docentes: [
-            {
-                iddocente: 5,
-                nombres: "David Ruben Zamora Toapanta",
-                email: "jordantonio.vera@gmail.com",
-                formacion_academica: "ingenieria",
-                foto: "https://www.ashoka.org/sites/default/files/styles/medium_1600x1000/public/thumbnails/images/daniela-kreimer.jpg?itok=R89tVtb4",
-                experiencia_laboral: "fgdgaaaa",
-            },
-            {
-                iddocente: 6,
-                nombres: "Manuel Arevalo Garcia",
-                email: "jordantonio.vera@gmail.com",
-                formacion_academica: "asas",
-                foto: "https://diseno.uc.cl/wp/wp-content/uploads/2016/11/Andres-6773_-500x500.jpg",
-                experiencia_laboral: "cscd",
-            }
-        ]
+        docentes: [],
+        error: false,
+        loading: false
     }
 
     handlePress = (params) => {
         this.props.navigation.navigate('DetalleDocente', params);
+    }
+
+    getAllDocentes = async () => {
+        this.setState({ loading: true });
+        try {
+            const data = await ApiHttp.docente.allshow();
+            this.setState({ loading: false, error: false, docentes: data });
+        } catch (error) {
+            this.setState({ loading: false, error: true });
+        }
+    }
+
+    spinner = () => {
+        if (this.state.loading) {
+            return (
+                <ActivityIndicator />
+            );
+        } else {
+            return;
+        }
+    }
+
+    error = () => {
+        if (this.state.error) {
+            return (
+                <View style={styles.msjError}>
+                    <Text>
+                        Upss!!, ha ocurrido un error. Intentalo más tarde.
+                    </Text>
+                </View>
+            );
+        } else {
+            return;
+        }
+    }
+
+    componentDidMount() {
+        this.getAllDocentes();
     }
 
     render() {
@@ -36,16 +61,18 @@ class ListaDocentes extends React.Component {
             <ScrollView>
                 <View style={styles.containerNoticia}>
                     <View style={[s.container]}>
+                        {this.spinner()}
+                        {this.error()}
                         {
                             this.state.docentes.map((docente) => {
                                 return (
                                     <Pressable key={docente.iddocente} onPress={() => this.handlePress(docente)}>
                                         <View style={[s.row, styles.filaNoticia, s.borderBottom]} >
                                             <View style={[s.col2, styles.colImagen]}>
-                                                <Image source={{ uri: docente.foto }} style={styles.imageNoticia}></Image>
+                                                <Image source={{ uri: UrlGlobal.urlArchivos+docente.foto }} style={styles.imageNoticia}></Image>
                                             </View>
                                             <View style={[s.col10]}>
-                                                <Text style={[s.fontWeightBold, styles.nombres]}>{docente.nombres}</Text>
+                                                <Text style={[styles.nombres]}>{docente.nombres}</Text>
                                                 <Text>{docente.email}</Text>
                                             </View>
                                         </View>
@@ -77,8 +104,12 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     nombres: {
-        fontSize: 17,
-        color: '#43434B'
+        color: "#171718",
+        fontSize:16
+    },
+    msjError: {
+        color: 'red',
+        padding: 10
     }
 })
 
